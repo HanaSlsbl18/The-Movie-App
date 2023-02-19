@@ -90,7 +90,7 @@ extension UpcomingVC: UITableViewDelegate, UITableViewDataSource {
             case .success(let videoElement):
                 DispatchQueue.main.async {
                     let viewModel = TitleInfoVM(id: title.id, title: titleName, youtubeView: videoElement, titleOverview: title.overview ?? "", media: title.media_type ?? "", releaseData: title.release_date ?? "", voteRating: title.vote_average)
-                    let vc = InfoDetailsVC()
+                    let vc = InfoPreviewVC()
                     vc.configure(with: viewModel)
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }

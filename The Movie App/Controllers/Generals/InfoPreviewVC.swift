@@ -1,5 +1,5 @@
 //
-//  InfoDetailsVC.swift
+//  InfoPreviewVC.swift
 //  The Movies App
 //
 //  Created by Hana Salsabila on 17/02/23.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class InfoDetailsVC: UIViewController {
+class InfoPreviewVC: UIViewController {
     
     var idSelect : Int = 0
     var mediaSelect : String = ""
@@ -73,7 +73,7 @@ class InfoDetailsVC: UIViewController {
     
 }
 
-extension InfoDetailsVC: UITableViewDelegate, UITableViewDataSource {
+extension InfoPreviewVC: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }

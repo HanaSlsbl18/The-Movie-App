@@ -115,6 +115,9 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 5 {
+            return 50
+        }
         return 1
     }
     
@@ -124,6 +127,9 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.delegate = self
+        
+        var index = indexPath.row
+        var page = 0
         
         switch indexPath.section {
         case Sections.TrendingMovies.rawValue:
@@ -145,7 +151,7 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
                     print(error.localizedDescription)
                 }
             }
-
+            
         case Sections.Popular.rawValue:
             ApiCaller.shared.getPopularMovies { results in
                 switch results {
@@ -155,7 +161,7 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
                     print(error.localizedDescription)
                 }
             }
-
+            
         case Sections.UpcomingMovies.rawValue:
             ApiCaller.shared.getUpcomingMovies { results in
                 switch results {
@@ -165,7 +171,7 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
                     print(error.localizedDescription)
                 }
             }
-
+            
         case Sections.TopRated.rawValue:
             ApiCaller.shared.getTopRatedMovies { results in
                 switch results {
@@ -175,19 +181,21 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
                     print(error.localizedDescription)
                 }
             }
-
+            
         case Sections.Discover.rawValue:
-            ApiCaller.shared.getDiscoverMovies { results in
-                DispatchQueue.main.async {
-                    switch results {
-                    case .success(let titles):
-                        cell.configure(with: titles)
-                    case .failure(let error):
-                        print(error.localizedDescription)
+            if index != 50 {
+                page = index + 1
+                ApiCaller.shared.getDiscoverMovies(with: page) { results in
+                    DispatchQueue.main.async {
+                        switch results {
+                        case .success(let titles):
+                            cell.configure(with: titles)
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
                     }
                 }
             }
-            
         default:
             return UITableViewCell()
         }
@@ -223,6 +231,7 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
         
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
     }
+
 }
 
 extension HomeVC: CollectionViewTableViewCellDelegate {

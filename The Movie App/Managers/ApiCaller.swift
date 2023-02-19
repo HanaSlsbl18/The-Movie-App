@@ -110,8 +110,8 @@ class ApiCaller {
         task.resume()
     }
     
-    func getDiscoverMovies(completion: @escaping (Result<[Title], Error>) -> Void) {
-        guard let url = URL(string: "\(Constants.baseURL)/3/discover/movie?api_key=\(Constants.API_KEY)&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate") else { return }
+    func getDiscoverMovies(with page: Int,completion: @escaping (Result<[Title], Error>) -> Void) {
+        guard let url = URL(string: "\(Constants.baseURL)/3/discover/movie?api_key=\(Constants.API_KEY)&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=\(page)&with_watch_monetization_types=flatrate") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {

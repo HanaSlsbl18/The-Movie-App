@@ -46,7 +46,7 @@ class SearchVC: UIViewController {
     }
     
     private func fetchDiscoverMovies() {
-        ApiCaller.shared.getDiscoverMovies { [weak self] results in
+        ApiCaller.shared.getDiscoverMovies(with: 1) { [weak self] results in
             switch results {
             case .success(let titles):
                 self?.titles = titles

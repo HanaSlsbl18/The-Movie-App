@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C54F372B29A7A729007CC9C1 /* UIScrollView_InfiniteScroll in Frameworks */ = {isa = PBXBuildFile; productRef = C54F372A29A7A729007CC9C1 /* UIScrollView_InfiniteScroll */; };
+		C54F372D29A7ACDD007CC9C1 /* ScrollingCollectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54F372C29A7ACDD007CC9C1 /* ScrollingCollectionTableViewCell.swift */; };
 		C5817BF229A20BA90041A64E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5817BF129A20BA90041A64E /* AppDelegate.swift */; };
 		C5817BF429A20BA90041A64E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5817BF329A20BA90041A64E /* SceneDelegate.swift */; };
 		C5817BF929A20BA90041A64E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5817BF729A20BA90041A64E /* Main.storyboard */; };
@@ -50,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C54F372C29A7ACDD007CC9C1 /* ScrollingCollectionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollingCollectionTableViewCell.swift; sourceTree = "<group>"; };
 		C5817BEE29A20BA90041A64E /* The Movie App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The Movie App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5817BF129A20BA90041A64E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C5817BF329A20BA90041A64E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C54F372B29A7A729007CC9C1 /* UIScrollView_InfiniteScroll in Frameworks */,
 				C5817C3D29A20FFA0041A64E /* SDWebImageMapKit in Frameworks */,
 				C5817C3B29A20FFA0041A64E /* SDWebImage in Frameworks */,
 			);
@@ -207,6 +211,7 @@
 			children = (
 				C5817C1629A20D190041A64E /* HomeHeaderView.swift */,
 				C5817C2D29A20EDF0041A64E /* CollectionViewTableViewCell.swift */,
+				C54F372C29A7ACDD007CC9C1 /* ScrollingCollectionTableViewCell.swift */,
 				C5817C2F29A20EEE0041A64E /* TitleCollectionViewCell.swift */,
 				C5817C3129A20EF80041A64E /* TitleTableViewCell.swift */,
 			);
@@ -271,6 +276,7 @@
 			packageProductDependencies = (
 				C5817C3A29A20FFA0041A64E /* SDWebImage */,
 				C5817C3C29A20FFA0041A64E /* SDWebImageMapKit */,
+				C54F372A29A7A729007CC9C1 /* UIScrollView_InfiniteScroll */,
 			);
 			productName = "The Movie App";
 			productReference = C5817BEE29A20BA90041A64E /* The Movie App.app */;
@@ -324,6 +330,7 @@
 			mainGroup = C5817BE529A20BA90041A64E;
 			packageReferences = (
 				C5817C3929A20FFA0041A64E /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				C54F372929A7A729007CC9C1 /* XCRemoteSwiftPackageReference "UIScrollView-InfiniteScroll" */,
 			);
 			productRefGroup = C5817BEF29A20BA90041A64E /* Products */;
 			projectDirPath = "";
@@ -381,6 +388,7 @@
 				C5817C3F29A210330041A64E /* Extensions.swift in Sources */,
 				C5817C3029A20EEE0041A64E /* TitleCollectionViewCell.swift in Sources */,
 				C5817C0D29A20C650041A64E /* ApiCaller.swift in Sources */,
+				C54F372D29A7ACDD007CC9C1 /* ScrollingCollectionTableViewCell.swift in Sources */,
 				C5817C2C29A20E630041A64E /* SearchVC.swift in Sources */,
 				C5817C0F29A20C990041A64E /* AllTitles.swift in Sources */,
 			);
@@ -662,6 +670,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C54F372929A7A729007CC9C1 /* XCRemoteSwiftPackageReference "UIScrollView-InfiniteScroll" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pronebird/UIScrollView-InfiniteScroll";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		C5817C3929A20FFA0041A64E /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
@@ -673,6 +689,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C54F372A29A7A729007CC9C1 /* UIScrollView_InfiniteScroll */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C54F372929A7A729007CC9C1 /* XCRemoteSwiftPackageReference "UIScrollView-InfiniteScroll" */;
+			productName = UIScrollView_InfiniteScroll;
+		};
 		C5817C3A29A20FFA0041A64E /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C5817C3929A20FFA0041A64E /* XCRemoteSwiftPackageReference "SDWebImage" */;

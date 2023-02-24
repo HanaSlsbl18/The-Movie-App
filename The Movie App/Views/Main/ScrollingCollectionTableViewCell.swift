@@ -21,7 +21,6 @@ class ScrollingCollectionTableViewCell: UITableViewCell {
     
     private let collectionView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: (UIScreen.main.bounds.width)/4, height: (UIScreen.main.bounds.width/4)/7*10) //CGSize(width: 91, height: 130)
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
@@ -35,10 +34,10 @@ class ScrollingCollectionTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.backgroundColor = .clear
-        contentView.addSubview(collectionView)
         
         collectionView.delegate = self
         collectionView.dataSource = self
+        contentView.addSubview(collectionView)
     }
     
     public func configure(with titles: [Title]) {
@@ -55,6 +54,18 @@ class ScrollingCollectionTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         collectionView.frame = contentView.bounds
+    }
+    
+    override func willTransition(to state: UITableViewCell.StateMask) {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+    
+    override func didTransition(to state: UITableViewCell.StateMask) {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 
@@ -107,3 +118,14 @@ extension ScrollingCollectionTableViewCell: UICollectionViewDelegate, UICollecti
     }
 }
 
+extension ScrollingCollectionTableViewCell: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if UIDevice.current.orientation.isPortrait {
+            return CGSize(width: UIScreen.main.bounds.width/4, height: UIScreen.main.bounds.width/4/7*10)
+        } else if UIDevice.current.orientation.isLandscape {
+            return CGSize(width: UIScreen.main.bounds.width/6, height: UIScreen.main.bounds.width/6/7*10)
+        } else {
+            return CGSize(width: UIScreen.main.bounds.width/4, height: UIScreen.main.bounds.width/4/7*10)
+        }
+    }
+}

@@ -48,6 +48,12 @@ class HomeVC: UIViewController {
         homeTableView.frame = view.bounds
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        DispatchQueue.main.async {
+            self.homeTableView.reloadData()
+        }
+    }
+    
     func checkInternet() {
         DispatchQueue.main.async {
             self.reachability.whenReachable = { reachability in
@@ -257,7 +263,13 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 5 {
-            return (UIScreen.main.bounds.width/4)/7*50
+            if UIDevice.current.orientation.isPortrait {
+                return UIScreen.main.bounds.width/4/7*50
+            } else if UIDevice.current.orientation.isLandscape {
+                return UIScreen.main.bounds.width/6/7*40
+            } else {
+                return UIScreen.main.bounds.width/4/7*50
+            }
         } else {
             return 200
         }

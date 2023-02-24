@@ -80,7 +80,7 @@ class InfoReviewTableViewCell: UITableViewCell {
         if rating == 0 {
             ratingLabel.text = "-/10"
         } else {
-            ratingLabel.text = "\(rating)/10"
+            ratingLabel.text = "Rating: \(rating)/10"
         }
     }
     

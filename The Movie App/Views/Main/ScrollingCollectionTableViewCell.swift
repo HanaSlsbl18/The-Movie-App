@@ -1,29 +1,30 @@
 //
-//  CollectionViewTableViewCell.swift
-//  The Movies App
+//  ScrollingCollectionTableViewCell.swift
+//  The Movie App
 //
-//  Created by Hana Salsabila on 17/02/23.
+//  Created by Hana Salsabila on 23/02/23.
 //
 
 import UIKit
 
-protocol CollectionViewTableViewCellDelegate: AnyObject {
-    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: TitleInfoVM)
+protocol ScrollingCollectionTableViewCellDelegate: AnyObject {
+    func scrollingCollectionTableViewCellDidTapCell(_ cell: ScrollingCollectionTableViewCell, viewModel: TitleInfoVM)
 }
 
-class CollectionViewTableViewCell: UITableViewCell {
+class ScrollingCollectionTableViewCell: UITableViewCell {
     
-    static let identifier = "CollectionViewTableViewCell"
+    static let identifier = "ScrollingCollectionTableViewCell"
 
-    weak var delegate: CollectionViewTableViewCellDelegate?
+    weak var delegate: ScrollingCollectionTableViewCellDelegate?
     
     private var titles : [Title] = [Title]()
     
     private let collectionView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 140, height: 200)
-        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: (UIScreen.main.bounds.width)/4, height: (UIScreen.main.bounds.width/4)/7*10) //CGSize(width: 91, height: 130)
+        layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.register(TitleCollectionViewCell.self, forCellWithReuseIdentifier: TitleCollectionViewCell.identifier)
@@ -57,7 +58,7 @@ class CollectionViewTableViewCell: UITableViewCell {
     }
 }
 
-extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension ScrollingCollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TitleCollectionViewCell.identifier, for: indexPath) as? TitleCollectionViewCell else {
@@ -96,7 +97,7 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
                         return
                     }
                     let viewModel = TitleInfoVM(id: title.id, title: titleName, youtubeView: videoElement, titleOverview: title.overview ?? "", media: titleMedia, releaseData: title.release_date ?? "", voteRating: title.vote_average)
-                    self?.delegate?.collectionViewTableViewCellDidTapCell(strongSelf, viewModel: viewModel)
+                    self?.delegate?.scrollingCollectionTableViewCellDidTapCell(strongSelf, viewModel: viewModel)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -105,3 +106,4 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         
     }
 }
+

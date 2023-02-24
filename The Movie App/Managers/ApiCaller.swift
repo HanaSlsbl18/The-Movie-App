@@ -21,6 +21,9 @@ enum APIError: Error  {
 class ApiCaller {
     static let shared = ApiCaller()
     
+    private init() {}
+    public private(set) var pages = [String]()
+    
     func getTrendingMovies(completion: @escaping (Result<[Title], Error>) -> Void) {
         guard let url = URL(string: "\(Constants.baseURL)/3/trending/movie/day?api_key=\(Constants.API_KEY)") else { return }
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -189,4 +192,24 @@ class ApiCaller {
         }
         task.resume()
     }
+    
+    func fetchPageData(completion: @escaping () -> Void) {
+        DispatchQueue.global().asyncAfter(deadline: .now()+2) { [weak self] in
+            self?.pages = Array(1...1).map { "\($0)" }
+            completion()
+        }
+    }
+    
+    func loadMorePosts(completion: @escaping ([String]) -> Void) {            DispatchQueue.global().asyncAfter(deadline: .now()+2) { [weak self] in
+            guard let strongSelf = self, let last = strongSelf.pages.last else { return }
+            let number = Int(last.components (separatedBy: " ").last!)!
+            let start = number + 1
+            let end = start
+            let newData = Array(start...end).map { "\($0)" }
+            strongSelf.pages.append(contentsOf: newData)
+            completion(newData)
+        }
+    }
 }
+
+

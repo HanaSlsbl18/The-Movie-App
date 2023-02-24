@@ -7,6 +7,7 @@
 
 import UIKit
 import Network
+import UIScrollView_InfiniteScroll
 
 enum Sections: Int {
     case TrendingMovies = 0
@@ -24,17 +25,22 @@ class HomeVC: UIViewController {
     private var randomTrendingMovies: Title?
     private var headerView: HomeHeaderView?
     
+    private var titles : [Title] = [Title]()
+    
     let sectionTitles : [String] = ["Trending Movies", "Trending Tv Shows","Popular Movies", "Upcoming Movies", "Top Rated Movies", "Discover Movies"]
     
     private let homeTableView : UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
         tv.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
+        tv.register(ScrollingCollectionTableViewCell.self, forCellReuseIdentifier: ScrollingCollectionTableViewCell.identifier)
+        
         return tv
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureAll()
+        setupDataBiding()
     }
     
     override func viewDidLayoutSubviews() {
@@ -42,8 +48,7 @@ class HomeVC: UIViewController {
         homeTableView.frame = view.bounds
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    func checkInternet() {
         DispatchQueue.main.async {
             self.reachability.whenReachable = { reachability in
                 if reachability.connection == .wifi {
@@ -62,12 +67,16 @@ class HomeVC: UIViewController {
                 self.present(alert, animated: true)
             }
             do {
-                print("halo")
                 try self.reachability.startNotifier()
             } catch {
                 print ("Unable to start notifier")
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        checkInternet()
     }
     deinit {
         reachability.stopNotifier()
@@ -107,6 +116,32 @@ class HomeVC: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: nil)
         navigationController?.navigationBar.tintColor = .label
     }
+    
+    private func setupDataBiding() {
+        ApiCaller.shared.fetchPageData { [weak self] in
+            DispatchQueue.main.async {
+                self?.homeTableView.reloadData ()
+            }
+        }
+        
+        homeTableView.infiniteScrollDirection = .vertical
+        homeTableView.addInfiniteScroll { [weak self] homeTableView in
+            
+            ApiCaller.shared.loadMorePosts { [weak self] moreData in
+                DispatchQueue.main.async {
+                    let startIndex = Int(moreData.first!.components(separatedBy: " ").last!)!
+                    let start = startIndex-1
+                    let end = start + moreData.count
+                    let indices = Array(start..<end).compactMap({
+                        return IndexPath(row: $0, section: 5)
+                    })
+                    self?.homeTableView.insertRows(at: indices,
+                                                   with: .automatic)
+                    homeTableView.finishInfiniteScroll()
+                }
+            }
+        }
+    }
 }
 
 extension HomeVC : UITableViewDelegate, UITableViewDataSource {
@@ -116,76 +151,73 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 5 {
-            return 50
+            return ApiCaller.shared.pages.count
+        } else {
+            return 1
         }
-        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as? CollectionViewTableViewCell else {
-            return UITableViewCell()
-        }
         
-        cell.delegate = self
-        
-        var index = indexPath.row
-        var page = 0
-        
-        switch indexPath.section {
-        case Sections.TrendingMovies.rawValue:
-            ApiCaller.shared.getTrendingMovies { results in
-                switch results {
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+        if indexPath.section != 5 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as? CollectionViewTableViewCell else {
+                return UITableViewCell()
             }
-            
-        case Sections.TrendingTvs.rawValue:
-            ApiCaller.shared.getTrendingTvs { results in
-                switch results {
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
+
+            cell.delegate = self
+
+            switch indexPath.section {
+            case Sections.TrendingMovies.rawValue:
+                ApiCaller.shared.getTrendingMovies { results in
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 }
-            }
-            
-        case Sections.Popular.rawValue:
-            ApiCaller.shared.getPopularMovies { results in
-                switch results {
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
+
+            case Sections.TrendingTvs.rawValue:
+                ApiCaller.shared.getTrendingTvs { results in
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 }
-            }
-            
-        case Sections.UpcomingMovies.rawValue:
-            ApiCaller.shared.getUpcomingMovies { results in
-                switch results {
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
+
+            case Sections.Popular.rawValue:
+                ApiCaller.shared.getPopularMovies { results in
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 }
-            }
-            
-        case Sections.TopRated.rawValue:
-            ApiCaller.shared.getTopRatedMovies { results in
-                switch results {
-                case .success(let titles):
-                    cell.configure(with: titles)
-                case .failure(let error):
-                    print(error.localizedDescription)
+
+            case Sections.UpcomingMovies.rawValue:
+                ApiCaller.shared.getUpcomingMovies { results in
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 }
-            }
-            
-        case Sections.Discover.rawValue:
-            if index != 50 {
-                page = index + 1
-                ApiCaller.shared.getDiscoverMovies(with: page) { results in
+
+            case Sections.TopRated.rawValue:
+                ApiCaller.shared.getTopRatedMovies { results in
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                }
+            case Sections.Discover.rawValue:
+                ApiCaller.shared.getDiscoverMovies(with: 1) { results in
                     DispatchQueue.main.async {
                         switch results {
                         case .success(let titles):
@@ -195,16 +227,37 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
                         }
                     }
                 }
+            default:
+                return UITableViewCell()
             }
-        default:
-            return UITableViewCell()
+            return cell
+            
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ScrollingCollectionTableViewCell.identifier, for: indexPath) as? ScrollingCollectionTableViewCell else {
+                return UITableViewCell()
+            }
+        
+            cell.delegate = self
+            
+            let currentPage = ApiCaller.shared.pages[indexPath.row]
+
+            ApiCaller.shared.getDiscoverMovies(with: Int(currentPage) ?? 0) { results in
+                DispatchQueue.main.async {
+                    switch results {
+                    case .success(let titles):
+                        cell.configure(with: titles)
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+            return cell
         }
-        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 5 {
-            return 420
+            return (UIScreen.main.bounds.width/4)/7*50
         } else {
             return 200
         }
@@ -234,12 +287,21 @@ extension HomeVC : UITableViewDelegate, UITableViewDataSource {
 
 }
 
-extension HomeVC: CollectionViewTableViewCellDelegate {
+extension HomeVC: CollectionViewTableViewCellDelegate, ScrollingCollectionTableViewCellDelegate {
     func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: TitleInfoVM) {
         DispatchQueue.main.async { [weak self] in
             let vc = InfoPreviewVC()
             vc.configure(with: viewModel)
             self?.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    func scrollingCollectionTableViewCellDidTapCell(_ cell: ScrollingCollectionTableViewCell, viewModel: TitleInfoVM) {
+        DispatchQueue.main.async { [weak self] in
+            let vc = InfoPreviewVC()
+            vc.configure(with: viewModel)
+            self?.navigationController?.pushViewController(vc, animated: true)
+            
         }
     }
 }
